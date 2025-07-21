@@ -2,9 +2,14 @@ import { Trophy, Medal, Award, Crown, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { type AnalysisResult } from "@/hooks/useGemini";
 
-export function Ranking() {
-  const topRanking = [
+interface RankingProps {
+  data?: AnalysisResult;
+}
+
+export function Ranking({ data }: RankingProps) {
+  const topRanking = data?.runners || [
     {
       position: 1,
       name: "Carlos Santos",
@@ -32,9 +37,9 @@ export function Ranking() {
   ];
 
   const monthlyStats = [
-    { label: "Participantes", value: "89", icon: Trophy },
-    { label: "Média de Tempo", value: "32:15", icon: TrendingUp },
-    { label: "Melhor Marca", value: "24:15", icon: Crown }
+    { label: "Participantes", value: data?.stats.totalParticipants?.toString() || "89", icon: Trophy },
+    { label: "Média de Tempo", value: data?.stats.averageTime || "32:15", icon: TrendingUp },
+    { label: "Melhor Marca", value: data?.stats.bestTime || "24:15", icon: Crown }
   ];
 
   const getPositionIcon = (position: number) => {
