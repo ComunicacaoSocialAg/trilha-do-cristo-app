@@ -10,6 +10,16 @@ export interface RunnerData {
   badge: string;
 }
 
+export interface HikeData {
+  id?: string;
+  name: string;
+  date: string;
+  duration: string;
+  distance: string;
+  elevation?: string;
+  location?: string;
+}
+
 export interface AnalysisResult {
   runners: RunnerData[];
   stats: {
@@ -17,6 +27,10 @@ export interface AnalysisResult {
     averageTime: string;
     bestTime: string;
   };
+}
+
+export interface ImageAnalysisResult {
+  hikeData: HikeData;
 }
 
 export const useGemini = () => {
@@ -82,8 +96,71 @@ export const useGemini = () => {
     }
   }, []);
 
+  const analyzeImage = useCallback(async (imageFile: File, apiKey: string): Promise<ImageAnalysisResult> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-vision" });
+
+      // Convert image to base64
+      const imageData = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(imageFile);
+      });
+
+      const prompt = `
+        Analise esta captura de tela de um aplicativo de trilha/corrida e extraia as informações da atividade.
+        Retorne APENAS um JSON válido com a seguinte estrutura:
+
+        {
+          "hikeData": {
+            "name": "Nome da Trilha",
+            "date": "2025-07-20",
+            "duration": "45:30",
+            "distance": "3.8",
+            "elevation": "230",
+            "location": "Local da Trilha"
+          }
+        }
+
+        Extraia o máximo de informações possível da imagem. Se algum dado não estiver disponível, use valores vazios ou omita o campo.
+        A data deve estar no formato YYYY-MM-DD, a duração no formato MM:SS, a distância em km e a elevação em metros.
+      `;
+
+      const imageParts = [
+        {
+          inlineData: {
+            data: imageData.split(',')[1], // Remove data URL prefix
+            mimeType: imageFile.type
+          }
+        }
+      ];
+
+      const result = await model.generateContent([prompt, ...imageParts]);
+      const response = await result.response;
+      const text = response.text();
+      
+      // Remove markdown code blocks if present
+      const cleanText = text.replace(/```json\s*|\s*```/g, '').trim();
+      
+      const analysis = JSON.parse(cleanText);
+      
+      setIsLoading(false);
+      return analysis;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao analisar imagem';
+      setError(errorMessage);
+      setIsLoading(false);
+      throw new Error(errorMessage);
+    }
+  }, []);
+
   return {
     analyzeFile,
+    analyzeImage,
     isLoading,
     error
   };

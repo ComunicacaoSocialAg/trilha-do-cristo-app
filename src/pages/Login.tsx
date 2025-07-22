@@ -43,12 +43,20 @@ export default function Login() {
     
     // Simulate login process
     setTimeout(() => {
+      // Save user data in localStorage
+      const userData = {
+        name: "Usuário Trilheiro",
+        email: loginData.email,
+        id: "user-" + Date.now()
+      };
+      localStorage.setItem("user", JSON.stringify(userData));
+      
       setIsLoading(false);
       toast({
         title: "Login realizado!",
         description: "Bem-vindo(a) de volta à Trilha do Cristo.",
       });
-      navigate('/');
+      navigate('/dashboard');
     }, 1500);
   };
 
@@ -68,12 +76,20 @@ export default function Login() {
     
     // Simulate registration process
     setTimeout(() => {
+      // Save user data in localStorage
+      const userData = {
+        name: registerData.name,
+        email: registerData.email,
+        id: "user-" + Date.now()
+      };
+      localStorage.setItem("user", JSON.stringify(userData));
+      
       setIsLoading(false);
       toast({
         title: "Cadastro realizado!",
         description: "Sua conta foi criada com sucesso.",
       });
-      navigate('/');
+      navigate('/dashboard');
     }, 1500);
   };
 
