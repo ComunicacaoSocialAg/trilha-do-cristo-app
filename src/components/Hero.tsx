@@ -2,6 +2,7 @@ import { ArrowRight, Play, MapPin, Users, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import heroImage from "@/assets/hero-image.jpg";
+import { Link } from "react-router-dom";
 
 export function Hero() {
   const stats = [
@@ -38,14 +39,26 @@ export function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-slide-up">
-            <Button size="lg" className="bg-gradient-mountain shadow-glow hover:shadow-strong transition-all text-lg px-8 py-6">
-              Registrar Minha Trilha
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="hero" size="lg" className="text-lg px-8 py-6">
-              <Play className="mr-2 h-5 w-5" />
-              Como Funciona
-            </Button>
+            <Link to="/track">
+              <Button 
+                size="lg" 
+                variant="hero"
+                className="text-lg px-8 py-6"
+              >
+                Registrar Minha Trilha
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <a href="#how-it-works">
+              <Button 
+                variant="hero" 
+                size="lg" 
+                className="text-lg px-8 py-6"
+              >
+                <Play className="mr-2 h-5 w-5" />
+                Como Funciona
+              </Button>
+            </a>
           </div>
 
           {/* Stats */}

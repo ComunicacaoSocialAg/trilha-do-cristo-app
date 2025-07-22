@@ -1,6 +1,7 @@
 import { Mountain, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 export function Header() {
@@ -39,12 +40,16 @@ export function Header() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="outline" size="sm">
-              <User className="h-4 w-4 mr-2" />
-              Entrar
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/login">
+                <User className="h-4 w-4 mr-2" />
+                Entrar
+              </Link>
             </Button>
-            <Button className="bg-gradient-mountain shadow-soft hover:shadow-medium transition-all">
-              Começar Trilha
+            <Button variant="hero" size="sm" className="shadow-soft hover:shadow-medium" asChild>
+              <Link to="/track">
+                Começar Trilha
+              </Link>
             </Button>
           </div>
 
@@ -67,12 +72,16 @@ export function Header() {
                   </a>
                 ))}
                 <div className="flex flex-col space-y-3 mt-6">
-                  <Button variant="outline">
-                    <User className="h-4 w-4 mr-2" />
-                    Entrar
+                  <Button variant="outline" asChild>
+                    <Link to="/login">
+                      <User className="h-4 w-4 mr-2" />
+                      Entrar
+                    </Link>
                   </Button>
-                  <Button className="bg-gradient-mountain">
-                    Começar Trilha
+                  <Button variant="hero" asChild>
+                    <Link to="/track">
+                      Começar Trilha
+                    </Link>
                   </Button>
                 </div>
               </div>

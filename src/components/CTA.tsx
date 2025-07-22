@@ -1,6 +1,7 @@
 import { ArrowRight, Smartphone, Share2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 export function CTA() {
   const socialLinks = [
@@ -8,19 +9,22 @@ export function CTA() {
       name: "WhatsApp",
       icon: "💬",
       description: "Grupo oficial dos trilheiros",
-      action: "Entrar no grupo"
+      action: "Entrar no grupo",
+      url: "https://chat.whatsapp.com/example"
     },
     {
       name: "Instagram", 
       icon: "📸",
       description: "Acompanhe nossas aventuras",
-      action: "Seguir @trilhadocristo"
+      action: "Seguir @trilhadocristo",
+      url: "https://instagram.com/trilhadocristo"
     },
     {
       name: "Facebook",
       icon: "👥", 
       description: "Comunidade no Facebook",
-      action: "Curtir página"
+      action: "Curtir página",
+      url: "https://facebook.com/trilhadocristo"
     }
   ];
 
@@ -49,9 +53,11 @@ export function CTA() {
               <Smartphone className="mr-2 h-5 w-5" />
               Baixar App (Em Breve)
             </Button>
-            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 text-lg px-8 py-6">
-              Registrar Agora
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" variant="hero" className="text-lg px-8 py-6" asChild>
+              <Link to="/track">
+                Registrar Agora
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
             </Button>
           </div>
         </div>
@@ -64,7 +70,11 @@ export function CTA() {
                 <div className="text-4xl mb-3">{social.icon}</div>
                 <h4 className="font-semibold text-white mb-2">{social.name}</h4>
                 <p className="text-white/80 text-sm mb-4">{social.description}</p>
-                <Button variant="ghost" className="text-white hover:bg-white/20 group-hover:translate-y-[-2px] transition-all">
+                <Button 
+                  variant="ghost" 
+                  className="text-white hover:bg-white/20 group-hover:translate-y-[-2px] transition-all"
+                  onClick={() => window.open(social.url, '_blank')}
+                >
                   {social.action}
                   <Share2 className="ml-2 h-4 w-4" />
                 </Button>
