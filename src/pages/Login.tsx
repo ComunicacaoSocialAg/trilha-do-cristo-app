@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -9,11 +9,20 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, User, Mail, Lock, ArrowRight } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, signIn, signUp, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (user && !loading) {
+      navigate('/dashboard');
+    }
+  }, [user, loading, navigate]);
   
   const [loginData, setLoginData] = useState({
     email: "",
@@ -37,30 +46,40 @@ export default function Login() {
     setRegisterData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login process
-    setTimeout(() => {
-      // Save user data in localStorage
-      const userData = {
-        name: "Usuário Trilheiro",
-        email: loginData.email,
-        id: "user-" + Date.now()
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
+    try {
+      const { error } = await signIn(loginData.email, loginData.password);
       
-      setIsLoading(false);
+      if (error) {
+        toast({
+          title: "Erro no login",
+          description: error.message === "Invalid login credentials" 
+            ? "Email ou senha incorretos."
+            : error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Login realizado!",
+          description: "Bem-vindo(a) de volta à Trilha do Cristo.",
+        });
+        navigate('/dashboard');
+      }
+    } catch (error) {
       toast({
-        title: "Login realizado!",
-        description: "Bem-vindo(a) de volta à Trilha do Cristo.",
+        title: "Erro no login",
+        description: "Ocorreu um erro inesperado.",
+        variant: "destructive"
       });
-      navigate('/dashboard');
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (registerData.password !== registerData.confirmPassword) {
@@ -74,23 +93,42 @@ export default function Login() {
     
     setIsLoading(true);
     
-    // Simulate registration process
-    setTimeout(() => {
-      // Save user data in localStorage
-      const userData = {
-        name: registerData.name,
-        email: registerData.email,
-        id: "user-" + Date.now()
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
+    try {
+      const { data, error } = await signUp(
+        registerData.email, 
+        registerData.password,
+        registerData.name
+      );
       
-      setIsLoading(false);
+      if (error) {
+        toast({
+          title: "Erro no cadastro",
+          description: error.message === "User already registered" 
+            ? "Este email já está em uso."
+            : error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Cadastro realizado!",
+          description: data.user?.email_confirmed_at 
+            ? "Sua conta foi criada com sucesso!"
+            : "Verifique seu email para confirmar a conta.",
+        });
+        
+        if (data.user?.email_confirmed_at) {
+          navigate('/dashboard');
+        }
+      }
+    } catch (error) {
       toast({
-        title: "Cadastro realizado!",
-        description: "Sua conta foi criada com sucesso.",
+        title: "Erro no cadastro",
+        description: "Ocorreu um erro inesperado.",
+        variant: "destructive"
       });
-      navigate('/dashboard');
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

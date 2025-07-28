@@ -5,9 +5,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Clock, MapPin, TrendingUp, Award, List, Activity } from "lucide-react";
+import { Calendar, Clock, MapPin, TrendingUp, Award, List, Activity, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Ranking } from "@/components/Ranking";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HikeData {
   id: string;
@@ -21,45 +23,76 @@ interface HikeData {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
   const [userName, setUserName] = useState<string>("Usuário");
   const [userHikes, setUserHikes] = useState<HikeData[]>([]);
   
   useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem("user");
-    if (!user) {
+    // Redirect unauthenticated users to login
+    if (!loading && !user) {
       navigate("/login");
       return;
     }
+
+    // Load user profile data when authenticated
+    if (user) {
+      loadUserProfile();
+      loadUserHikes();
+    }
+  }, [user, loading, navigate]);
+
+  const loadUserProfile = async () => {
+    if (!user) return;
     
     try {
-      const userData = JSON.parse(user);
-      setUserName(userData.name || "Usuário");
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('user_id', user.id)
+        .single();
       
-      // Load user hikes from localStorage
-      const savedHikes = localStorage.getItem("userHikes");
-      if (savedHikes) {
-        setUserHikes(JSON.parse(savedHikes));
-      } else {
-        // Sample data if no hikes exist
-        const sampleHikes: HikeData[] = [
-          {
-            id: "1",
-            name: "Trilha do Cristo",
-            date: "2025-07-15",
-            duration: "45:30",
-            distance: "3.8",
-            elevation: "230",
-            location: "Rio de Janeiro, RJ"
-          }
-        ];
-        localStorage.setItem("userHikes", JSON.stringify(sampleHikes));
-        setUserHikes(sampleHikes);
+      if (profile) {
+        setUserName(profile.display_name || user.email || "Usuário");
       }
     } catch (error) {
-      console.error("Error loading user data:", error);
+      console.error('Error loading profile:', error);
+      setUserName(user.email || "Usuário");
     }
-  }, [navigate]);
+  };
+
+  const loadUserHikes = () => {
+    if (!user) return;
+    
+    // Load user hikes from localStorage or provide sample data
+    const storedHikes = localStorage.getItem(`userHikes_${user.id}`);
+    if (storedHikes) {
+      setUserHikes(JSON.parse(storedHikes));
+    } else {
+      // Sample data for demonstration
+      const sampleHikes: HikeData[] = [
+        {
+          id: "1",
+          name: "Trilha do Cristo",
+          date: "2025-07-15",
+          duration: "45:30",
+          distance: "3.8",
+          elevation: "230",
+          location: "Rio de Janeiro, RJ"
+        }
+      ];
+      localStorage.setItem(`userHikes_${user.id}`, JSON.stringify(sampleHikes));
+      setUserHikes(sampleHikes);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -97,13 +130,23 @@ export default function Dashboard() {
                     <span className="text-sm text-muted-foreground">Conquistas</span>
                   </div>
                 </div>
-                <Button 
-                  variant="hero" 
-                  className="w-full mt-2"
-                  onClick={() => navigate('/track')}
-                >
-                  Registrar Nova Trilha
-                </Button>
+                <div className="space-y-2">
+                  <Button 
+                    variant="hero" 
+                    className="w-full"
+                    onClick={() => navigate('/track')}
+                  >
+                    Registrar Nova Trilha
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sair
+                  </Button>
+                </div>
               </CardContent>
             </Card>
             
