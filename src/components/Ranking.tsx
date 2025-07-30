@@ -2,7 +2,7 @@ import { Trophy, Medal, Award, Crown, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { type AnalysisResult } from "@/hooks/useGemini";
+import { type AnalysisResult } from "@/types";
 
 interface RankingProps {
   data?: AnalysisResult;

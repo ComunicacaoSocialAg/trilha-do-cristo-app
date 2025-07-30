@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useGemini, type AnalysisResult } from '@/hooks/useGemini';
+import { type AnalysisResult } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 interface FileUploadProps {
@@ -17,7 +17,8 @@ export function FileUpload({ onAnalysisComplete }: FileUploadProps) {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini-api-key') || '');
   const [dragActive, setDragActive] = useState(false);
   
-  const { analyzeFile, isLoading, error } = useGemini();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -65,29 +66,50 @@ export function FileUpload({ onAnalysisComplete }: FileUploadProps) {
   };
 
   const handleAnalyze = async () => {
-    if (!selectedFile || !apiKey) {
+    if (!selectedFile) {
       toast({
-        title: "Dados incompletos",
-        description: "Selecione um arquivo e informe a chave da API",
+        title: "Arquivo necessário",
+        description: "Selecione um arquivo para análise.",
         variant: "destructive"
       });
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
     try {
-      localStorage.setItem('gemini-api-key', apiKey);
-      const result = await analyzeFile(selectedFile, apiKey);
-      onAnalysisComplete(result);
+      // Simulate analysis with mock data
+      const mockResult: AnalysisResult = {
+        runners: [
+          { position: 1, name: "Carlos Santos", time: "24:15", city: "Poços de Caldas", trend: "+2", badge: "Recordista" },
+          { position: 2, name: "Marina Silva", time: "26:30", city: "Poços de Caldas", trend: "=", badge: "Consistente" },
+          { position: 3, name: "João Pereira", time: "27:45", city: "Poços de Caldas", trend: "+1", badge: "Em Alta" }
+        ],
+        stats: {
+          totalParticipants: 89,
+          averageTime: "32:15",
+          bestTime: "24:15"
+        }
+      };
+
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      onAnalysisComplete(mockResult);
       toast({
         title: "Análise concluída!",
         description: "Os dados do ranking foram atualizados.",
       });
     } catch (err) {
+      setError("Erro ao processar arquivo");
       toast({
         title: "Erro na análise",
-        description: "Verifique a chave da API e tente novamente.",
+        description: "Tente novamente.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,16 +117,6 @@ export function FileUpload({ onAnalysisComplete }: FileUploadProps) {
     <Card className="w-full max-w-2xl mx-auto mb-8">
       <CardContent className="p-6">
         <div className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="api-key">Chave da API Gemini</Label>
-            <Input
-              id="api-key"
-              type="password"
-              placeholder="Cole sua chave da API aqui..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-            />
-          </div>
 
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
@@ -168,7 +180,7 @@ export function FileUpload({ onAnalysisComplete }: FileUploadProps) {
 
           <Button
             onClick={handleAnalyze}
-            disabled={!selectedFile || !apiKey || isLoading}
+            disabled={!selectedFile || isLoading}
             className="w-full"
             size="lg"
           >

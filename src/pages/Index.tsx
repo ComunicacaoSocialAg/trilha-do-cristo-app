@@ -7,7 +7,7 @@ import { Ranking } from "@/components/Ranking";
 import { CTA } from "@/components/CTA";
 import { Footer } from "@/components/Footer";
 import { FileUpload } from "@/components/FileUpload";
-import { type AnalysisResult } from "@/hooks/useGemini";
+import { type AnalysisResult } from "@/types";
 
 const Index = () => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult | undefined>();
