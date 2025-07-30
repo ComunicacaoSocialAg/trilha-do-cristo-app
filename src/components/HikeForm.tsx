@@ -6,18 +6,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Activity } from 'lucide-react';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface HikeData {
   id: string;
   date: string;
   time: string;
   distance: string;
+  imageUrl?: string;
 }
 
 export function HikeForm() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [distance, setDistance] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -39,7 +42,8 @@ export function HikeForm() {
       id: crypto.randomUUID(),
       date,
       time,
-      distance
+      distance,
+      imageUrl
     };
     
     // Get existing hikes or initialize empty array
@@ -111,7 +115,9 @@ export function HikeForm() {
             />
           </div>
           
-          <Button 
+          <ImageUpload onImageUploaded={setImageUrl} />
+          
+          <Button
             type="submit" 
             className="w-full bg-gradient-mountain shadow-glow hover:shadow-strong"
             size="lg"
