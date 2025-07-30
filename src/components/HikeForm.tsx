@@ -7,12 +7,16 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Activity } from 'lucide-react';
 import { ImageUpload } from '@/components/ImageUpload';
+import { supabase } from '@/integrations/supabase/client';
 
 interface HikeData {
   id: string;
+  name: string;
   date: string;
-  time: string;
+  duration: string;
   distance: string;
+  elevation?: string;
+  location?: string;
   imageUrl?: string;
 }
 
@@ -25,7 +29,13 @@ export function HikeForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Get current user
+  const getCurrentUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user || null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!date || !time || !distance) {
@@ -37,32 +47,54 @@ export function HikeForm() {
       return;
     }
 
-    // Create hike data
-    const hikeData: HikeData = {
-      id: crypto.randomUUID(),
-      date,
-      time,
-      distance,
-      imageUrl
-    };
-    
-    // Get existing hikes or initialize empty array
-    const existingHikesStr = localStorage.getItem('userHikes');
-    const existingHikes: HikeData[] = existingHikesStr ? JSON.parse(existingHikesStr) : [];
-    
-    // Add new hike to the beginning of the array
-    const updatedHikes = [hikeData, ...existingHikes];
-    
-    // Save updated hikes
-    localStorage.setItem('userHikes', JSON.stringify(updatedHikes));
-    
-    toast({
-      title: "Trilha registrada!",
-      description: "Sua trilha foi salva com sucesso.",
-    });
-    
-    // Redirect to dashboard
-    navigate('/dashboard');
+    try {
+      const user = await getCurrentUser();
+      if (!user) {
+        toast({
+          title: "Usuário não autenticado",
+          description: "Faça login para registrar suas trilhas.",
+          variant: "destructive"
+        });
+        navigate('/login');
+        return;
+      }
+
+      // Create hike data
+      const hikeData: HikeData = {
+        id: crypto.randomUUID(),
+        name: `Trilha de ${new Date(date).toLocaleDateString('pt-BR')}`,
+        date,
+        duration: time,
+        distance,
+        imageUrl
+      };
+      
+      // Get existing hikes or initialize empty array
+      const storageKey = `userHikes_${user.id}`;
+      const existingHikesStr = localStorage.getItem(storageKey);
+      const existingHikes: HikeData[] = existingHikesStr ? JSON.parse(existingHikesStr) : [];
+      
+      // Add new hike to the beginning of the array
+      const updatedHikes = [hikeData, ...existingHikes];
+      
+      // Save updated hikes
+      localStorage.setItem(storageKey, JSON.stringify(updatedHikes));
+      
+      toast({
+        title: "Trilha registrada!",
+        description: "Sua trilha foi salva com sucesso.",
+      });
+      
+      // Redirect to dashboard
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error saving hike:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

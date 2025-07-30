@@ -41,6 +41,18 @@ export default function Dashboard() {
     }
   }, [user, loading, navigate]);
 
+  // Also reload hikes when coming back to this page
+  useEffect(() => {
+    const handleFocus = () => {
+      if (user) {
+        loadUserHikes();
+      }
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [user]);
+
   const loadUserProfile = async () => {
     if (!user) return;
     
