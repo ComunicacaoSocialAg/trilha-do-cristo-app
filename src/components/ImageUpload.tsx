@@ -131,18 +131,25 @@ export function ImageUpload({ onImageUploaded }: ImageUploadProps) {
         <p className="text-xs text-muted-foreground mb-3">
           Print da tela do seu app de trilha/corrida
         </p>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleImageSelect}
-          className="hidden"
-          id="image-upload"
-        />
-        <Label htmlFor="image-upload" className="cursor-pointer">
-          <Button variant="outline" type="button" size="sm">
-            Selecionar Imagem
-          </Button>
-        </Label>
+        <Button 
+          variant="outline" 
+          type="button" 
+          size="sm"
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+              const target = e.target as HTMLInputElement;
+              if (target.files && target.files[0]) {
+                processImage(target.files[0]);
+              }
+            };
+            input.click();
+          }}
+        >
+          Selecionar Imagem
+        </Button>
       </div>
 
       {imagePreview && (
