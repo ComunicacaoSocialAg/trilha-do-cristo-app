@@ -1,5 +1,5 @@
 import { Mountain, MapPin, Mail, Heart } from "lucide-react";
-import logo from "@/assets/logo.png";
+const logoUrl = "/lovable-uploads/a59b0db8-6670-4d63-8cca-17c9dedacf24.png";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -32,7 +32,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <img src={logo} alt="Trilha do Cristo" className="h-10 w-10" />
+              <img src={logoUrl} alt="Trilha do Cristo" className="h-10 w-10" />
               <div>
                 <h3 className="font-bold text-xl">Trilha do Cristo</h3>
                 <p className="text-sm text-white/70">Poços de Caldas</p>

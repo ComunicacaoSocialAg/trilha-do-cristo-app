@@ -2,7 +2,7 @@ import { Mountain, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png";
+const logoUrl = "/lovable-uploads/a59b0db8-6670-4d63-8cca-17c9dedacf24.png";
 
 export function Header() {
   const navItems = [
@@ -18,7 +18,7 @@ export function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <img src={logo} alt="Trilha do Cristo" className="h-10 w-10" />
+            <img src={logoUrl} alt="Trilha do Cristo" className="h-10 w-10" />
             <div>
               <h1 className="font-bold text-xl text-primary">Trilha do Cristo</h1>
               <p className="text-xs text-muted-foreground">Poços de Caldas</p>
