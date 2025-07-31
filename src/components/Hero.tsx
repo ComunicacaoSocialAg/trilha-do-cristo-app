@@ -1,7 +1,7 @@
 import { ArrowRight, Play, MapPin, Users, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import heroImage from "@/assets/hero-image.jpg";
+import newHeroImage from "@/assets/new-hero-image.jpg";
 import { Link } from "react-router-dom";
 
 export function Hero() {
@@ -16,7 +16,7 @@ export function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
-          src={heroImage} 
+          src={newHeroImage} 
           alt="Trilha do Cristo"
           className="w-full h-full object-cover"
         />
