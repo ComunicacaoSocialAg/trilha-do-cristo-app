@@ -6,10 +6,10 @@ import logo from "@/assets/logo.png";
 
 export function Header() {
   const navItems = [
-    { label: "Início", href: "#home" },
-    { label: "Como Funciona", href: "#how-it-works" },
-    { label: "Galeria", href: "#gallery" },
-    { label: "Ranking", href: "#ranking" },
+    { label: "Início", href: "/#home" },
+    { label: "Como Funciona", href: "/#how-it-works" },
+    { label: "Galeria", href: "/#gallery" },
+    { label: "Ranking", href: "/#ranking" },
   ];
 
   return (
