@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Clock, MapPin, TrendingUp, Award, List, Activity, LogOut } from "lucide-react";
+import { Calendar, Clock, MapPin, TrendingUp, Award, List, Activity, LogOut, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Ranking } from "@/components/Ranking";
+import { Gamification } from "@/components/Gamification";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -217,6 +218,10 @@ export default function Dashboard() {
                 <Activity className="h-4 w-4 mr-2" />
                 Minhas Atividades
               </TabsTrigger>
+              <TabsTrigger value="gamification" className="text-base">
+                <Trophy className="h-4 w-4 mr-2" />
+                Gamificação
+              </TabsTrigger>
               <TabsTrigger value="ranking" className="text-base">
                 <List className="h-4 w-4 mr-2" />
                 Ranking
@@ -259,6 +264,10 @@ export default function Dashboard() {
                   </Button>
                 </div>
               )}
+            </TabsContent>
+            
+            <TabsContent value="gamification">
+              <Gamification userHikes={userHikes} userId={user?.id || ''} />
             </TabsContent>
             
             <TabsContent value="ranking">
