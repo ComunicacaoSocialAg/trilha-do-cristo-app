@@ -80,7 +80,6 @@ export function HowItWorks() {
         <div className="hidden lg:block relative -mt-24 pointer-events-none">
           <div className="absolute top-1/2 left-1/4 w-1/4 h-0.5 bg-gradient-to-r from-primary/30 to-accent/30"></div>
           <div className="absolute top-1/2 left-1/2 w-1/4 h-0.5 bg-gradient-to-r from-accent/30 to-primary-glow/30"></div>
-          <div className="absolute top-1/2 left-3/4 w-1/4 h-0.5 bg-gradient-to-r from-primary-glow/30 to-accent/30"></div>
         </div>
       </div>
     </section>
