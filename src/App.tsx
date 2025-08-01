@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import TrackHike from "./pages/TrackHike";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Loja from "./pages/Loja";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/track" element={<TrackHike />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/loja" element={<Loja />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

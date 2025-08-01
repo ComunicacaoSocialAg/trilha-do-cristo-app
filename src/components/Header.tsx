@@ -10,6 +10,7 @@ export function Header() {
     { label: "Como Funciona", href: "/#how-it-works" },
     { label: "Galeria", href: "/#gallery" },
     { label: "Ranking", href: "/#ranking" },
+    { label: "Loja da Trilha", href: "/loja" },
   ];
 
   return (
