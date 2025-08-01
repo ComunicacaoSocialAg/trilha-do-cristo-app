@@ -83,7 +83,7 @@ export function FileUpload({ onAnalysisComplete }: FileUploadProps) {
       const mockResult: AnalysisResult = {
         runners: [
           { position: 1, name: "Carlos Santos", time: "24:15", city: "Poços de Caldas", trend: "+2", badge: "Recordista" },
-          { position: 2, name: "Marina Silva", time: "26:30", city: "Poços de Caldas", trend: "=", badge: "Consistente" },
+          { position: 2, name: "Bruno Garcia", time: "26:30", city: "Poços de Caldas", trend: "=", badge: "Consistente" },
           { position: 3, name: "João Pereira", time: "27:45", city: "Poços de Caldas", trend: "+1", badge: "Em Alta" }
         ],
         stats: {

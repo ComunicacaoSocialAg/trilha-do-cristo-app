@@ -20,7 +20,7 @@ export function Ranking({ data }: RankingProps) {
     },
     {
       position: 2, 
-      name: "Marina Silva",
+      name: "Bruno Garcia",
       time: "26:30",
       city: "Poços de Caldas", 
       trend: "=",

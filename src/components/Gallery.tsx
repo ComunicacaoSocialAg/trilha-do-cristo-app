@@ -9,7 +9,7 @@ export function Gallery() {
     {
       id: 1,
       image: hikersGroup,
-      author: "Marina Silva",
+      author: "Bruno Garcia",
       time: "28:45",
       date: "Hoje",
       likes: 12,
