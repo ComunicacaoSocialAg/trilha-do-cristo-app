@@ -266,7 +266,7 @@ export function Gamification({ userHikes, userId }: GamificationProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-primary" />
-          Gamificação
+          Conquistas
         </CardTitle>
         <CardDescription>
           Conquiste badges e complete desafios
