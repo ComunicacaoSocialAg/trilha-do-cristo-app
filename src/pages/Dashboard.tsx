@@ -220,7 +220,7 @@ export default function Dashboard() {
               </TabsTrigger>
               <TabsTrigger value="gamification" className="text-base">
                 <Trophy className="h-4 w-4 mr-2" />
-                Gamificação
+                Conquistas
               </TabsTrigger>
               <TabsTrigger value="ranking" className="text-base">
                 <List className="h-4 w-4 mr-2" />
