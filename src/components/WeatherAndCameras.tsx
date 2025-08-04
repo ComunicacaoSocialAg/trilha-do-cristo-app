@@ -1,21 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Cloud, Sun, CloudRain, AlertTriangle, Camera, Thermometer, Wind, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const mockWeatherData = [
-  { day: 'Hoje', temp: '28°C', condition: 'Ensolarado', icon: Sun, humidity: '65%', wind: '12 km/h' },
-  { day: 'Amanhã', temp: '25°C', condition: 'Parcialmente nublado', icon: Cloud, humidity: '70%', wind: '15 km/h' },
-  { day: 'Sexta', temp: '22°C', condition: 'Chuva leve', icon: CloudRain, humidity: '85%', wind: '18 km/h' },
-  { day: 'Sábado', temp: '26°C', condition: 'Ensolarado', icon: Sun, humidity: '60%', wind: '10 km/h' },
-  { day: 'Domingo', temp: '24°C', condition: 'Nublado', icon: Cloud, humidity: '75%', wind: '14 km/h' }
-];
+const METEOBLUE_API_KEY = 'lKCoNk4bWfXInjM5';
+const POCOS_DE_CALDAS_COORDS = { lat: -21.7887, lon: -46.5656 };
+
+interface WeatherData {
+  day: string;
+  temp: string;
+  condition: string;
+  icon: any;
+  humidity: string;
+  wind: string;
+}
+
+const getWeatherIcon = (code: number) => {
+  if (code === 1) return Sun;
+  if (code >= 2 && code <= 3) return Cloud;
+  if (code >= 4 && code <= 9) return CloudRain;
+  return Cloud;
+};
+
+const getWeatherCondition = (code: number) => {
+  const conditions: { [key: number]: string } = {
+    1: 'Ensolarado',
+    2: 'Parcialmente nublado',
+    3: 'Nublado',
+    4: 'Chuva leve',
+    5: 'Chuva',
+    6: 'Chuva forte',
+    7: 'Neve leve',
+    8: 'Neve',
+    9: 'Tempestade'
+  };
+  return conditions[code] || 'Indefinido';
+};
 
 const mockAlerts = [
-  { type: 'warning', message: 'Previsão de chuva forte entre 14h-16h na sexta-feira' },
-  { type: 'info', message: 'Vento forte esperado no sábado pela manhã' }
+  { type: 'warning', message: 'Consulte a previsão atualizada antes de iniciar a trilha' },
+  { type: 'info', message: 'Dados fornecidos por Meteoblue para Poços de Caldas' }
 ];
 
 const mockCameras = [
@@ -27,6 +53,55 @@ const mockCameras = [
 
 export function WeatherAndCameras() {
   const [selectedCamera, setSelectedCamera] = useState(1);
+  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const response = await fetch(
+          `https://my.meteoblue.com/packages/basic-1h_basic-day?lat=${POCOS_DE_CALDAS_COORDS.lat}&lon=${POCOS_DE_CALDAS_COORDS.lon}&asl=1186&format=json&apikey=${METEOBLUE_API_KEY}`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          const days = ['Hoje', 'Amanhã', 'Depois', 'Sexta', 'Sábado', 'Domingo'].slice(0, 5);
+          const processedData: WeatherData[] = data.data_day.time.slice(0, 5).map((date: string, index: number) => {
+            const temp = Math.round(data.data_day.temperature_max[index]);
+            const humidity = data.data_day.relativehumidity_mean[index];
+            const wind = Math.round(data.data_day.windspeed_mean[index] * 3.6); // Convert m/s to km/h
+            const weatherCode = data.data_day.pictocode[index];
+            
+            return {
+              day: days[index],
+              temp: `${temp}°C`,
+              condition: getWeatherCondition(weatherCode),
+              icon: getWeatherIcon(weatherCode),
+              humidity: `${humidity}%`,
+              wind: `${wind} km/h`
+            };
+          });
+          
+          setWeatherData(processedData);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados meteorológicos:', error);
+        // Fallback to mock data on error
+        setWeatherData([
+          { day: 'Hoje', temp: '28°C', condition: 'Ensolarado', icon: Sun, humidity: '65%', wind: '12 km/h' },
+          { day: 'Amanhã', temp: '25°C', condition: 'Parcialmente nublado', icon: Cloud, humidity: '70%', wind: '15 km/h' },
+          { day: 'Sexta', temp: '22°C', condition: 'Chuva leve', icon: CloudRain, humidity: '85%', wind: '18 km/h' },
+          { day: 'Sábado', temp: '26°C', condition: 'Ensolarado', icon: Sun, humidity: '60%', wind: '10 km/h' },
+          { day: 'Domingo', temp: '24°C', condition: 'Nublado', icon: Cloud, humidity: '75%', wind: '14 km/h' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeatherData();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -39,8 +114,13 @@ export function WeatherAndCameras() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {mockWeatherData.map((weather, index) => {
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="text-muted-foreground">Carregando previsão do tempo...</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {weatherData.map((weather, index) => {
               const IconComponent = weather.icon;
               return (
                 <div key={index} className="text-center p-4 rounded-lg bg-muted/50">
@@ -62,8 +142,9 @@ export function WeatherAndCameras() {
                   </div>
                 </div>
               );
-            })}
-          </div>
+             })}
+            </div>
+          )}
         </CardContent>
       </Card>
 
