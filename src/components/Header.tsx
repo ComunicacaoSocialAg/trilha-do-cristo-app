@@ -2,7 +2,7 @@ import { Mountain, Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
-const logoUrl = "/lovable-uploads/a59b0db8-6670-4d63-8cca-17c9dedacf24.png";
+const logoUrl = "/lovable-uploads/cab77173-adf3-4f54-be2d-e32e4fa4ce55.png";
 
 export function Header() {
   const navItems = [

@@ -1,5 +1,5 @@
 import { Mountain, MapPin, Mail, Heart } from "lucide-react";
-const logoUrl = "/lovable-uploads/a59b0db8-6670-4d63-8cca-17c9dedacf24.png";
+const logoUrl = "/lovable-uploads/cab77173-adf3-4f54-be2d-e32e4fa4ce55.png";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
