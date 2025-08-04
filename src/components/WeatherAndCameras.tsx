@@ -27,6 +27,8 @@ const mockCameras = [
 
 export function WeatherAndCameras() {
   const [selectedCamera, setSelectedCamera] = useState(1);
+  
+  // Force cache refresh
 
   return (
     <div className="space-y-8">
